@@ -16,4 +16,4 @@ A portfolio of 5 Excel projects covering the full data analyst workflow — clea
 `Advanced Formulas` `Power Query` `PivotTables` `Data Validation` `Dashboard Design` `Statistical Analysis`
 
 ## Contact
-[LinkedIn] · [Email]
+[www.linkedin.com/in/veronica-gika] · [verohgika12@gmail.com]
