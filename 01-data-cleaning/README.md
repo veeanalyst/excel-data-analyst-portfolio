@@ -36,10 +36,7 @@ from recurring.
 | Missing Discount Applied | 4,199 | Flagged — rows excluded |
 | Total Spent ≠ Price × Quantity | 0 | ✅ No mismatches found |
 | Duplicate Transaction IDs | 0 | ✅ No duplicates found |
-| Extra spaces — Category | 0 | ✅ TRIM applied — none found |
-| Extra spaces — Payment Method | 0 | ✅ TRIM applied — none found |
-| Extra spaces — Item | 0 | ✅ TRIM applied — none found |
-| Extra spaces — Location | 0 | ✅ TRIM applied — none found |
+| Extra spaces — All Text Fields | 0 | ✅ TRIM applied — none found |
 | **Total rows flagged** | **4,996** | |
 | **Clean rows** | **7,579** | |
 
@@ -80,7 +77,7 @@ Item, Payment Method, and Location.
 A blank form for entering new transactions going forward. Dropdown lists and
 validation rules are built in so the same data quality problems cannot recur.
 
-![New Entry Template](./screenshots/New_Entry_Template.png)
+![New Transaction_Entry Template](./screenshots/New_Transaction_Entry_Template.png)
 
 ---
 
