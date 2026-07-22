@@ -9,9 +9,10 @@ A raw retail store sales export arrived with thousands of missing values across
 key fields — product names, prices, quantities, and discount flags — making it
 unreliable for reporting or decision-making.
 
-The goal was to identify every data quality issue, flag and isolate the affected
-rows, and deliver a clean dataset ready for analysis — plus put a system in place
-to prevent the same problems from recurring.
+The goal was to identify every data quality issue, clean and standardize the
+affected fields, flag and isolate incomplete rows, and deliver a clean dataset
+ready for analysis — plus put a system in place to prevent the same problems
+from recurring.
 
 ---
 
@@ -26,112 +27,148 @@ to prevent the same problems from recurring.
 
 ## Issues found
 
-| Issue | Count |
-|-------|-------|
-| Missing Item values | 1,213 |
-| Missing Price Per Unit | 609 |
-| Missing Quantity | 604 |
-| Missing Total Spent | 604 |
-| Missing Discount Applied | 4,199 |
-| Total Spent ≠ Price × Quantity | 0 |
-| **Total rows flagged** | **4,996** |
-| **Clean rows** | **7,579** |
+| Issue | Count | Result |
+|-------|-------|--------|
+| Missing Item values | 1,213 | Flagged — rows excluded |
+| Missing Price Per Unit | 609 | Flagged — rows excluded |
+| Missing Quantity | 604 | Flagged — rows excluded |
+| Missing Total Spent | 604 | Flagged — rows excluded |
+| Missing Discount Applied | 4,199 | Flagged — rows excluded |
+| Total Spent ≠ Price × Quantity | 0 | ✅ No mismatches found |
+| Duplicate Transaction IDs | 0 | ✅ No duplicates found |
+| Extra spaces — Category | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Payment Method | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Item | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Location | 0 | ✅ TRIM applied — none found |
+| **Total rows flagged** | **4,996** | |
+| **Clean rows** | **7,579** | |
+
+> TRIM was applied across all text fields as standard practice. No extra spaces
+> were found in this dataset, confirming the export was clean in that regard.
+> Duplicate checks and Total Spent cross-validation were also run — both clear.
 
 ---
 
 ## Workbook structure
 
-The file `data-cleaning.xlsx` has four sheets:
-
 ### 1. Data Quality Checklist
-The first thing you see when you open the file. Documents every issue type
-found, the count of affected rows, and the fix applied. Results update
-automatically if the raw data changes.
+Documents every issue checked, the count found, and the fix applied.
+Results update automatically if the raw data changes.
 
-### 2. Raw Data
-The original 12,575 rows with eight helper columns (L to S) added to the right.
-Rows with any issue are highlighted in red.
-
-### 3. Cleaned Data
-Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
-using INDEX/MATCH — no copy-paste. Includes a summary of total clean rows and
-total transaction value.
-
-### 4. New Entry Template
-A blank form for adding new transactions going forward. Dropdown lists and
-validation rules are built in so the same data quality problems cannot recur.
+![Data Quality Checklist](./screenshots/Data_Quality_Checklist.png)
 
 ---
 
-## How the cleaning logic works
+### 2. Raw Data
+The original 12,575 rows with four TRIM cleaning columns (L–O) and eleven flag
+columns (P–AB) added to the right. Rows with any issue are highlighted in red.
 
-Eight helper columns (L to S) are added to the right of the raw data.
-Each one asks a simple yes/no question about that row:
+![Raw Data](./screenshots/Raw_Data.png)
 
-| Column | Name | Question it asks |
-|--------|------|-----------------|
-| L | Flag_Blank_Item | Is the Item name missing? |
-| M | Flag_Blank_Price | Is the Price Per Unit missing? |
-| N | Flag_Blank_Qty | Is the Quantity missing? |
-| O | Flag_Blank_Total | Is the Total Spent missing? |
-| P | Flag_Blank_Discount | Is the Discount Applied missing? |
-| Q | Flag_Total_Mismatch | Does Price × Quantity not equal Total Spent? |
-| R | Issue_Count | How many of the above flags are TRUE? |
-| S | Row_Status | **Clean** (0 issues) or **Needs Review** (1+ issues) |
+---
 
-Rows marked **Needs Review** are highlighted red using conditional formatting
-tied to column S. The Cleaned Data sheet pulls only rows where S = "Clean".
+### 3. Cleaned Data
+Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
+using INDEX/MATCH — no copy-paste. Uses TRIM-cleaned versions of Category,
+Item, Payment Method, and Location.
+
+![Cleaned Data](./screenshots/Cleaned_Data.png)
+
+---
+
+### 4. New Entry Template
+A blank form for entering new transactions going forward. Dropdown lists and
+validation rules are built in so the same data quality problems cannot recur.
+
+![New Entry Template](./screenshots/New_Entry_Template.png)
+
+---
+
+## How the cleaning works
+
+### Step 1 — Apply TRIM to all text fields (columns L–O)
+
+TRIM was applied to every text column as a standard first step, even before
+checking for issues. This ensures no hidden spaces affect lookups, grouping,
+or any downstream analysis.
+
+| Column | Name | Formula | Field cleaned |
+|--------|------|---------|---------------|
+| L | Clean_Category | `=TRIM(C2)` | Category |
+| M | Clean_Payment_Method | `=TRIM(H2)` | Payment Method |
+| N | Clean_Item | `=TRIM(D2)` | Item |
+| O | Clean_Location | `=TRIM(I2)` | Location |
+
+**What TRIM does:** removes all leading and trailing spaces from a cell value.
+> `"  Credit Card  "` → `"Credit Card"`
+
+**Result:** No extra spaces were found in any column in this dataset.
+The TRIM check confirms the source export was consistently formatted.
+
+---
+
+### Step 2 — Flag every issue (columns P–Z)
+
+| Column | Flag | What it checks |
+|--------|------|----------------|
+| P | Flag_Blank_Item | Is Item missing? |
+| Q | Flag_Blank_Price | Is Price Per Unit missing? |
+| R | Flag_Blank_Qty | Is Quantity missing? |
+| S | Flag_Blank_Total | Is Total Spent missing? |
+| T | Flag_Blank_Discount | Is Discount Applied missing? |
+| U | Flag_Total_Mismatch | Does Price × Quantity ≠ Total Spent? |
+| V | Flag_Duplicate | Does this Transaction ID appear more than once? |
+| W | Flag_Spaces_Category | Does raw Category differ from TRIM result? |
+| X | Flag_Spaces_Payment | Does raw Payment Method differ from TRIM result? |
+| Y | Flag_Spaces_Item | Does raw Item differ from TRIM result? |
+| Z | Flag_Spaces_Location | Does raw Location differ from TRIM result? |
+
+---
+
+### Step 3 — Count and label (columns AA, AB)
+
+| Column | Name | Formula | What it does |
+|--------|------|---------|-------------|
+| AA | Issue_Count | `=COUNTIF(P2:Z2,TRUE)` | Counts how many flags are TRUE |
+| AB | Row_Status | `=IF(AA2=0,"Clean","Needs Review")` | Labels the row |
 
 ---
 
 ## How the conditional formatting rule works
 
-The red highlight is controlled by one formula applied to the entire data range (columns A to K):
+The red highlight on the Raw Data sheet is controlled by one formula
+applied across columns A to K:
 
 ```
-=$S2="Needs Review"
+=$AB2="Needs Review"
 ```
-
-Breaking it down:
 
 | Part | Meaning |
 |------|---------|
-| `=` | Tells Excel this is a formula, not a value |
-| `$S` | Always look in column S (Row_Status) — the `$` locks the column |
-| `2` | Start from row 2 — no `$` here so the row number slides down automatically |
-| `="Needs Review"` | If the value equals "Needs Review", apply the red fill |
+| `=` | Tells Excel this is a formula |
+| `$AB` | Always check column AB (Row_Status) — `$` locks the column |
+| `2` | Row number — no `$` so it slides down automatically for each row |
+| `="Needs Review"` | If true, apply the red fill |
 
-**Why the `$` before S matters:**
-Without it, the rule would drift sideways and check the wrong column as it
-moves across the row. The `$` keeps it locked on column S for every cell it checks:
-
-- Row 2 → checks **$S2**
-- Row 3 → checks **$S3**
-- Row 4 → checks **$S4**
-
-**The full chain in plain English:**
-
+**The full chain:**
 ```
-Empty cell found            →  Flag column = TRUE
-One or more flags TRUE      →  Issue_Count (R) goes up
-Issue_Count > 0             →  Row_Status (S) = "Needs Review"
-Row_Status = "Needs Review" →  Entire row turns red
+Dirty or empty cell         →  Flag column = TRUE
+One or more flags TRUE      →  Issue_Count (AA) > 0
+Issue_Count > 0             →  Row_Status (AB) = "Needs Review"
+Row_Status = "Needs Review" →  Row turns red
 ```
 
-This means the highlight is fully dynamic — fix a blank cell in the raw data
-and the row automatically turns from red to white without touching the formatting.
+Fix a blank cell and the row automatically clears from red to white.
 
 ---
 
 ## New Entry Template explained
 
-The New Entry Template is a blank form designed for entering new transactions
-going forward. It has seven built-in rules that make it impossible to submit
-the same types of errors found in the raw data:
+Seven built-in rules prevent the same errors recurring in future data entry:
 
 | Field | Rule |
 |-------|------|
-| Category | Dropdown — only the 8 valid categories accepted |
+| Category | Dropdown — 8 valid categories only |
 | Payment Method | Dropdown — Digital Wallet, Credit Card, or Cash only |
 | Location | Dropdown — Online or In-store only |
 | Discount Applied | Dropdown — TRUE or FALSE only (no more blanks) |
@@ -148,4 +185,4 @@ the same types of errors found in the raw data:
 ## Files
 - `raw-data/retail_store_sales.csv` — original dataset from Kaggle
 - `data-cleaning.xlsx` — workbook with all four sheets
-- `screenshots/` — before/after views of the data
+- `screenshots/` — views of each sheet
