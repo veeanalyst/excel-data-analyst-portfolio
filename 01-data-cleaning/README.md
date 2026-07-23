@@ -79,7 +79,7 @@ from recurring.
 Documents every issue checked, the count found, and the fix applied.
 Results update automatically if the raw data changes.
 
-![Data Quality Checklist](./screenshots/Data_Quality_Checklist.png)
+![Data Quality Checklist](./screenshots/.png)
 
 ---
 
@@ -87,7 +87,7 @@ Results update automatically if the raw data changes.
 The original 12,575 rows with seven cleaning columns (L–R) and thirteen flag
 columns (S–AE) added to the right. Rows with any issue are highlighted in red.
 
-![Raw Data](./screenshots/Raw_Data.png)
+![Raw Data](./screenshots/.png)
 
 ---
 
@@ -104,7 +104,7 @@ Item, Payment Method, and Location.
 A blank form for entering new transactions going forward. Dropdown lists and
 validation rules are built in so the same data quality problems cannot recur.
 
-![New Entry Template](./screenshots/New_Entry_Template.png)
+![New Entry Template](./screenshots/New_Transaction_Entry_Template.png)
 
 ---
 
