@@ -52,7 +52,7 @@ from recurring.
 Documents every issue checked, the count found, and the fix applied.
 Results update automatically if the raw data changes.
 
-![Data Quality Checklist](./screenshots/Data_Quality_Checklist.png)
+![Data Quality Checklist](./screenshots/.png)
 
 ---
 
@@ -60,7 +60,7 @@ Results update automatically if the raw data changes.
 The original 12,575 rows with four TRIM cleaning columns (L–O) and eleven flag
 columns (P–AB) added to the right. Rows with any issue are highlighted in red.
 
-![Raw Data](./screenshots/Raw_Data.png)
+![Raw Data](./screenshots/.png)
 
 ---
 
@@ -69,7 +69,7 @@ Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
 using INDEX/MATCH — no copy-paste. Uses TRIM-cleaned versions of Category,
 Item, Payment Method, and Location.
 
-![Cleaned Data](./screenshots/Cleaned_Data.png)
+![Cleaned Data](./screenshots/.png)
 
 ---
 
@@ -77,7 +77,7 @@ Item, Payment Method, and Location.
 A blank form for entering new transactions going forward. Dropdown lists and
 validation rules are built in so the same data quality problems cannot recur.
 
-![New Transaction_Entry Template](./screenshots/New_Transaction_Entry_Template.png)
+![New Transaction_Entry Template](./screenshots/.png)
 
 ---
 
