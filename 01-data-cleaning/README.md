@@ -25,6 +25,28 @@ from recurring.
 
 ---
 
+## Dataset fields
+
+| Field | Data Type | Notes |
+|-------|-----------|-------|
+| Transaction ID | Text | Unique identifier per transaction e.g. `TXN_6867343` |
+| Customer ID | Text | Repeats — one customer can have multiple transactions |
+| Category | Text | 8 categories e.g. `Patisserie`, `Furniture`, `Beverages` |
+| Item | Text | Product code e.g. `Item_10_PAT` — **1,213 blanks** |
+| Price Per Unit | Decimal | Unit cost — **609 blanks** |
+| Quantity | Decimal | Stored as decimal, not whole number — **604 blanks** |
+| Total Spent | Decimal | Should equal Price × Quantity — **604 blanks** |
+| Payment Method | Text | `Digital Wallet`, `Credit Card`, or `Cash` |
+| Location | Text | `Online` or `In-store` |
+| Transaction Date | Text | Stored as `YYYY-MM-DD` string — converted to a real date using `DATEVALUE` |
+| Discount Applied | Boolean | `TRUE` or `FALSE` — **4,199 blanks**, largest gap in dataset |
+
+**Data type issues addressed in the workbook:**
+- **Transaction Date** is stored as plain text, meaning Excel would sort it alphabetically rather than chronologically. A `DATEVALUE` formula converts it to a proper date.
+- **Quantity** is stored as a decimal, meaning the source system could record `2.5` units. The New Entry Template enforces whole numbers only via data validation.
+
+---
+
 ## Issues found
 
 | Issue | Count | Result |
@@ -36,7 +58,12 @@ from recurring.
 | Missing Discount Applied | 4,199 | Flagged — rows excluded |
 | Total Spent ≠ Price × Quantity | 0 | ✅ No mismatches found |
 | Duplicate Transaction IDs | 0 | ✅ No duplicates found |
-| Extra spaces — All Text Fields | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Transaction ID | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Customer ID | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Category | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Payment Method | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Item | 0 | ✅ TRIM applied — none found |
+| Extra spaces — Location | 0 | ✅ TRIM applied — none found |
 | **Total rows flagged** | **4,996** | |
 | **Clean rows** | **7,579** | |
 
@@ -52,15 +79,15 @@ from recurring.
 Documents every issue checked, the count found, and the fix applied.
 Results update automatically if the raw data changes.
 
-![Data Quality Checklist](./screenshots/.png)
+![Data Quality Checklist](./screenshots/Data_Quality_Checklist.png)
 
 ---
 
 ### 2. Raw Data
-The original 12,575 rows with four TRIM cleaning columns (L–O) and eleven flag
-columns (P–AB) added to the right. Rows with any issue are highlighted in red.
+The original 12,575 rows with seven cleaning columns (L–R) and thirteen flag
+columns (S–AE) added to the right. Rows with any issue are highlighted in red.
 
-![Raw Data](./screenshots/.png)
+![Raw Data](./screenshots/Raw_Data.png)
 
 ---
 
@@ -69,7 +96,7 @@ Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
 using INDEX/MATCH — no copy-paste. Uses TRIM-cleaned versions of Category,
 Item, Payment Method, and Location.
 
-![Cleaned Data](./screenshots/.png)
+![Cleaned Data](./screenshots/Cleaned_Data.png)
 
 ---
 
@@ -77,7 +104,7 @@ Item, Payment Method, and Location.
 A blank form for entering new transactions going forward. Dropdown lists and
 validation rules are built in so the same data quality problems cannot recur.
 
-![New Transaction_Entry Template](./screenshots/.png)
+![New Entry Template](./screenshots/New_Entry_Template.png)
 
 ---
 
@@ -89,12 +116,20 @@ TRIM was applied to every text column as a standard first step, even before
 checking for issues. This ensures no hidden spaces affect lookups, grouping,
 or any downstream analysis.
 
+TRIM is applied to **every text field without exception**. Extra spaces in an ID
+field are particularly dangerous — `"TXN_6867343"` and `" TXN_6867343"` look
+identical on screen but will silently break any VLOOKUP or MATCH trying to find
+that record.
+
 | Column | Name | Formula | Field cleaned |
 |--------|------|---------|---------------|
-| L | Clean_Category | `=TRIM(C2)` | Category |
-| M | Clean_Payment_Method | `=TRIM(H2)` | Payment Method |
-| N | Clean_Item | `=TRIM(D2)` | Item |
-| O | Clean_Location | `=TRIM(I2)` | Location |
+| L | Clean_Transaction_ID | `=TRIM(A2)` | Transaction ID |
+| M | Clean_Customer_ID | `=TRIM(B2)` | Customer ID |
+| N | Clean_Category | `=TRIM(C2)` | Category |
+| O | Clean_Payment_Method | `=TRIM(H2)` | Payment Method |
+| P | Clean_Item | `=TRIM(D2)` | Item |
+| Q | Clean_Location | `=TRIM(I2)` | Location |
+| R | Clean_Transaction_Date | `=DATEVALUE(J2)` | Transaction Date (text → real date) |
 
 **What TRIM does:** removes all leading and trailing spaces from a cell value.
 > `"  Credit Card  "` → `"Credit Card"`
@@ -108,17 +143,19 @@ The TRIM check confirms the source export was consistently formatted.
 
 | Column | Flag | What it checks |
 |--------|------|----------------|
-| P | Flag_Blank_Item | Is Item missing? |
-| Q | Flag_Blank_Price | Is Price Per Unit missing? |
-| R | Flag_Blank_Qty | Is Quantity missing? |
-| S | Flag_Blank_Total | Is Total Spent missing? |
-| T | Flag_Blank_Discount | Is Discount Applied missing? |
-| U | Flag_Total_Mismatch | Does Price × Quantity ≠ Total Spent? |
-| V | Flag_Duplicate | Does this Transaction ID appear more than once? |
-| W | Flag_Spaces_Category | Does raw Category differ from TRIM result? |
-| X | Flag_Spaces_Payment | Does raw Payment Method differ from TRIM result? |
-| Y | Flag_Spaces_Item | Does raw Item differ from TRIM result? |
-| Z | Flag_Spaces_Location | Does raw Location differ from TRIM result? |
+| S | Flag_Blank_Item | Is Item missing? |
+| T | Flag_Blank_Price | Is Price Per Unit missing? |
+| U | Flag_Blank_Qty | Is Quantity missing? |
+| V | Flag_Blank_Total | Is Total Spent missing? |
+| W | Flag_Blank_Discount | Is Discount Applied missing? |
+| X | Flag_Total_Mismatch | Does Price × Quantity ≠ Total Spent? |
+| Y | Flag_Duplicate | Does this Transaction ID appear more than once? |
+| Z | Flag_Spaces_TxnID | Does raw Transaction ID differ from TRIM result? |
+| AA | Flag_Spaces_CustID | Does raw Customer ID differ from TRIM result? |
+| AB | Flag_Spaces_Category | Does raw Category differ from TRIM result? |
+| AC | Flag_Spaces_Payment | Does raw Payment Method differ from TRIM result? |
+| AD | Flag_Spaces_Item | Does raw Item differ from TRIM result? |
+| AE | Flag_Spaces_Location | Does raw Location differ from TRIM result? |
 
 ---
 
@@ -126,8 +163,8 @@ The TRIM check confirms the source export was consistently formatted.
 
 | Column | Name | Formula | What it does |
 |--------|------|---------|-------------|
-| AA | Issue_Count | `=COUNTIF(P2:Z2,TRUE)` | Counts how many flags are TRUE |
-| AB | Row_Status | `=IF(AA2=0,"Clean","Needs Review")` | Labels the row |
+| AF | Issue_Count | `=COUNTIF(S2:AE2,TRUE)` | Counts how many flags are TRUE |
+| AG | Row_Status | `=IF(AF2=0,"Clean","Needs Review")` | Labels the row |
 
 ---
 
@@ -137,21 +174,21 @@ The red highlight on the Raw Data sheet is controlled by one formula
 applied across columns A to K:
 
 ```
-=$AB2="Needs Review"
+=$AG2="Needs Review"
 ```
 
 | Part | Meaning |
 |------|---------|
 | `=` | Tells Excel this is a formula |
-| `$AB` | Always check column AB (Row_Status) — `$` locks the column |
+| `$AG` | Always check column AG (Row_Status) — `$` locks the column |
 | `2` | Row number — no `$` so it slides down automatically for each row |
 | `="Needs Review"` | If true, apply the red fill |
 
 **The full chain:**
 ```
 Dirty or empty cell         →  Flag column = TRUE
-One or more flags TRUE      →  Issue_Count (AA) > 0
-Issue_Count > 0             →  Row_Status (AB) = "Needs Review"
+One or more flags TRUE      →  Issue_Count (AF) > 0
+Issue_Count > 0             →  Row_Status (AG) = "Needs Review"
 Row_Status = "Needs Review" →  Row turns red
 ```
 
