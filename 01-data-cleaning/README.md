@@ -96,7 +96,7 @@ Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
 using INDEX/MATCH — no copy-paste. Uses TRIM-cleaned versions of Category,
 Item, Payment Method, and Location.
 
-![Cleaned Data](./screenshots/Cleaned_Data.png)
+![Cleaned Data](/screenshots/.png)
 
 ---
 
