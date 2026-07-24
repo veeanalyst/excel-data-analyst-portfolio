@@ -18,7 +18,14 @@ time period without touching any formulas.
 PivotTables · PivotCharts · Slicers · Timeline · KPI Cards · Conditional Formatting
 
 ## Dataset
-TBD
+This project uses the same Dirty Retail Store Sales dataset from Project 1.
+The cleaned output (7,579 rows) from Project 1 is the source for this dashboard,
+demonstrating an end-to-end workflow — clean first, then analyse.
+
+**Source:** [Kaggle](https://www.kaggle.com/datasets/ahmedmohamed2003/retail-store-sales-dirty-for-data-cleaning)
+- 7,579 clean rows (filtered from 12,575 raw)
+- Key fields used: Category, Location, Payment Method, Transaction Date, Total Spent
+- License: CC BY-SA 4.0
 
 ## Files
 - `raw-data/` — source dataset
