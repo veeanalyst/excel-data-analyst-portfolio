@@ -79,7 +79,7 @@ from recurring.
 Documents every issue checked, the count found, and the fix applied.
 Results update automatically if the raw data changes.
 
-![Data Quality Checklist](.screenshots/screenshot_data_quality_checklist.png)
+![Data Quality Checklist](screenshots/screenshot_data_quality_checklist.png)
 
 ---
 
