@@ -129,7 +129,7 @@ that record.
 | O | Clean_Payment_Method | `=TRIM(H2)` | Payment Method |
 | P | Clean_Item | `=TRIM(D2)` | Item |
 | Q | Clean_Location | `=TRIM(I2)` | Location |
-| R | Clean_Transaction_Date | `=DATEVALUE(J2)` | Transaction Date (text → real date) |
+| R | Clean_Transaction_Date | `=IFERROR(DATEVALUE(J2), IF(ISNUMBER(J2), J2, ""))` | Transaction Date (text → real date) |
 
 **What TRIM does:** removes all leading and trailing spaces from a cell value.
 > `"  Credit Card  "` → `"Credit Card"`
