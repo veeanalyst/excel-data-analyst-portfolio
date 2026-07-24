@@ -79,7 +79,7 @@ from recurring.
 Documents every issue checked, the count found, and the fix applied.
 Results update automatically if the raw data changes.
 
-![Data Quality Checklist](/screenshots/Data_Quality_Checklist.png)
+![Data Quality Checklist](./screenshots/screenshots/data_quality_checklist.png)
 
 ---
 
@@ -87,7 +87,7 @@ Results update automatically if the raw data changes.
 The original 12,575 rows with seven cleaning columns (L–R) and thirteen flag
 columns (S–AE) added to the right. Rows with any issue are highlighted in red.
 
-![Raw Data](/screenshots/Raw_Data.png)
+![Raw Data](./screenshots/screenshots/raw_data.png)
 
 ---
 
@@ -96,7 +96,7 @@ Only the 7,579 rows that passed all checks. Pulled automatically from Raw Data
 using INDEX/MATCH — no copy-paste. Uses TRIM-cleaned versions of Category,
 Item, Payment Method, and Location.
 
-![Cleaned Data](/screenshots/Cleaned_Data.png)
+![Cleaned Data](./screenshots/screenshots/cleaned_data.png)
 
 ---
 
