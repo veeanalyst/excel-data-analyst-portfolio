@@ -40,7 +40,7 @@ an end-to-end workflow — clean first, then analyse.
 
 ## Dashboard
 
-![Dashboard](/screenshots/Retail_Performance_Dashboard.png)
+![Dashboard](./screenshots/Retail_Performance_Dashboard.png)
 
 ---
 
@@ -67,13 +67,13 @@ All 7,579 clean rows — the single source of truth for every formula in the
 workbook. Hidden so the dashboard is the only thing an end user interacts with.
 
 ### 2. PivotTables (hidden)
-![Revenue by Category](/screenshots/revenue_by_category.png)
+![Revenue by Category](./screenshots/revenue_by_category.png)
 
-![Revenue by Location](/screenshots/evenue_by_location.png)
+![Revenue by Location](./screenshots/evenue_by_location.png)
 
-![Monthly Revenue Trend](/screenshots/monthly_revenue_trend.png)
+![Monthly Revenue Trend](./screenshots/monthly_revenue_trend.png)
 
-![Revenue by Payment Method](/screenshots/revenue_by_payment_method.png)
+![Revenue by Payment Method](./screenshots/revenue_by_payment_method.png)
 
 ## 3. Charts
 
