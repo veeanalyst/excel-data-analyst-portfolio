@@ -29,18 +29,18 @@ an end-to-end workflow — clean first, then analyse.
 
 | Field | Type | Role in dashboard |
 |-------|------|-------------------|
-| Category | Text | Revenue by Category bar chart; slicer filter |
-| Location | Text | Online vs In-store pie chart; slicer filter |
-| Payment Method | Text | Revenue by Payment Method bar chart; slicer filter |
-| Transaction Date | Date | Monthly trend line chart; timeline filter |
-| Total Spent | Decimal | Primary measure across all charts and KPI cards |
-| Transaction ID | Text | Transaction count in KPI card |
+| Category | Text | Revenue by Category chart; PivotTable row label |
+| Location | Text | Online vs In-store pie chart; PivotTable row label |
+| Payment Method | Text | Revenue by Payment Method chart; PivotTable row label |
+| Transaction Date | Date | Monthly trend chart; grouped by month in PivotTable |
+| Total Spent | Decimal | Primary measure — summed across all PivotTables |
+| Transaction ID | Text | Transaction count KPI card |
 
 ---
 
 ## Dashboard
 
-![Dashboard](./screenshots/Retail_Performance_Dashboard.png)
+![Dashboard](./screenshots/retail_sales_performance_dashboard.png)
 
 ---
 
@@ -54,49 +54,94 @@ an end-to-end workflow — clean first, then analyse.
 | Revenue by Category | Bar chart | Butchers leads at $136k; Milk Products lowest at $117k |
 | Revenue by Location | Pie chart | Online 51% ($503k) vs In-store 49% ($486k) |
 | Revenue by Payment Method | Bar chart | Cash leads ($344k), Digital Wallet lowest ($321k) |
-| Monthly Revenue Trend | Line chart | 37 months Jan 2022 – Jan 2025; peak in Jan 2022 |
+| Monthly Revenue Trend | Line chart | 37 months Jan 2022 – Jan 2025; consistent $22k–$30k band |
+
+> **Note:** January 2025 shows a sharp drop to ~$15k. This reflects partial
+> month data — the dataset does not cover the full month of January 2025.
 
 ---
 
 ## Workbook structure
 
-The file `pivot-dashboard.xlsx` has three sheets:
+The file `pivot-dashboard.xlsx` has four sheets:
 
-### 1. Data (hidden)
-All 7,579 clean rows — the single source of truth for every formula in the
-workbook. Hidden so the dashboard is the only thing an end user interacts with.
+### 1. Data
+All 7,579 clean rows from Project 1 — the single source of truth for all
+four PivotTables. Keeping data on a dedicated sheet ensures PivotTables
+always refresh from one consistent source.
 
-### 2. PivotTables (hidden)
-![Revenue by Category](./screenshots/revenue_by_category.png)
+### 2. PivotTables
+Four PivotTables built from the Data sheet, each summarising a different
+dimension of the sales data:
 
-![Revenue by Location](./screenshots/evenue_by_location.png)
+| PivotTable | Rows | Values | Purpose |
+|------------|------|--------|---------|
+| Revenue by Category | Category | Sum of Total Spent | Feeds the category bar chart |
+| Revenue by Location | Location | Sum of Total Spent | Feeds the pie chart |
+| Revenue by Payment Method | Payment Method | Sum of Total Spent | Feeds the payment bar chart |
+| Monthly Revenue | Transaction Date (grouped by month) | Sum of Total Spent | Feeds the trend line chart |
 
-![Monthly Revenue Trend](./screenshots/monthly_revenue_trend.png)
-
-![Revenue by Payment Method](./screenshots/revenue_by_payment_method.png)
-
-## 3. Charts
+### 3. Charts
+Four charts built from the PivotTables — moved to a dedicated chart sheet
+to keep the PivotTables sheet clean and the dashboard uncluttered.
 
 ### 4. Dashboard
-One-page view with KPI cards and 4 charts. Grid lines are hidden to give a
-clean, report-ready appearance. Charts pull directly from the Calculations sheet.
+One-page view combining the KPI cards and all four charts. Grid lines are
+hidden for a clean, report-ready appearance.
 
 ---
 
+## How PivotTables work
+
+A PivotTable summarises a large dataset into a compact table without writing
+any formulas. You drag fields into rows, columns, and values — Excel does
+the aggregation automatically.
+
+**Example — Revenue by Category PivotTable:**
+
+| Row Labels | Sum of Total Spent |
+|---|---|
+| Beverages | $124,513.00 |
+| Butchers | $136,146.50 |
+| Computers and electric accessories | $126,621.50 |
+| ... | ... |
+
+- **Row Labels** → Category field dragged into Rows
+- **Sum of Total Spent** → Total Spent dragged into Values, set to Sum
+
+**Key advantage:** PivotTables refresh automatically when the source data
+changes — click **Refresh All** and every chart and summary updates instantly.
 
 ---
 
-### Charts
-Each chart is linked to a named range in the Calculations sheet:
+## How the monthly trend works
 
-| Chart  
-|-------|
-| Revenue by Category 
-| Revenue by Location  
-| Revenue by Payment Method  
-| Monthly Revenue Trend 
-Charts update automatically when the underlying data changes — no manual
-refresh needed.
+The Monthly Revenue PivotTable groups Transaction Date by month automatically:
+
+1. Transaction Date is dragged into Rows
+2. Right-click any date → **Group** → select **Months** and **Years**
+3. Excel creates month-year groupings (Jan 2022, Feb 2022, etc.)
+4. Total Spent is dragged into Values → set to Sum
+
+This ensures months appear in chronological order on the chart x-axis —
+avoiding the alphabetical sorting issue that occurs when dates are stored
+as text.
+
+---
+
+## How the charts connect to PivotTables
+
+Each chart is a **PivotChart** — built directly from a PivotTable. This means:
+- The chart updates automatically when the PivotTable refreshes
+- The chart and PivotTable always stay in sync
+- No manual data range selection needed
+
+| Chart | Source PivotTable | Chart type |
+|-------|-------------------|------------|
+| Revenue by Category | Revenue by Category | Horizontal bar |
+| Revenue by Location | Revenue by Location | Pie |
+| Revenue by Payment Method | Revenue by Payment Method | Vertical bar |
+| Monthly Revenue Trend | Monthly Revenue | Line |
 
 ---
 
@@ -104,14 +149,14 @@ refresh needed.
 
 - **Revenue is evenly spread** across all 8 categories — the gap between
   highest (Butchers $136k) and lowest (Milk Products $117k) is only $19k.
-  No single category dominates, which suggests a balanced product mix.
+  No single category dominates, suggesting a balanced product mix.
 - **Online and In-store are nearly equal** at 51% vs 49%. Neither channel
-  has a clear advantage — both deserve continued investment.
+  has a significant advantage — both deserve continued investment.
 - **All three payment methods are within $23k of each other** — Cash ($344k),
-  Credit Card ($324k), Digital Wallet ($321k). No single method is dominant.
-- **Monthly revenue stabilised after Jan 2022** — the opening month was
-  unusually high (~$35k). Revenue has since settled in the $22k–$30k band
-  consistently through 2023 and 2024, suggesting a maturing, stable business.
+  Credit Card ($324k), Digital Wallet ($321k). No payment type dominates.
+- **Monthly revenue is stable** — after a high opening month in Jan 2022
+  (~$35k), revenue settled into a consistent $22k–$30k band through 2023
+  and 2024, suggesting a mature, steady business.
 
 ---
 
@@ -119,15 +164,15 @@ refresh needed.
 
 | Decision | Reason |
 |----------|--------|
-| Data and Calculations sheets hidden | End users only need the dashboard — hiding source sheets prevents accidental edits |
-| Grid lines removed on Dashboard | Gives a clean, presentation-ready appearance |
-| SUMIF over PivotTables | Formulas are auditable and update without a manual refresh |
-| Two-layer formula structure | Separates logic (Calculations) from presentation (Dashboard) |
-| Footer with data source | Gives credit and shows transparency about where numbers come from |
+| 4 separate sheets | Separates data, logic, charts, and presentation for easy navigation |
+| PivotTables over SUMIF | Auto-refresh on data change; native connection to PivotCharts |
+| PivotCharts | Stay in sync with PivotTables automatically — no manual updates |
+| Grid lines hidden on Dashboard | Gives a clean, presentation-ready appearance |
+| KPI cards at the top | Most important numbers visible first before charts |
 
 ---
 
 ## Files
 - `raw-data/retail_store_sales.csv` — source dataset (same as Project 1)
-- `pivot-dashboard.xlsx` — workbook with Data, Calculations, and Dashboard sheets
-- `screenshots/Dashboard.png` — dashboard view
+- `pivot-dashboard.xlsx` — workbook with Data, PivotTables, Charts, and Dashboard sheets
+- `screenshots/Retail_Performance_Dashboard.png` — dashboard view
