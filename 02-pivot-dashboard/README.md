@@ -40,7 +40,7 @@ an end-to-end workflow — clean first, then analyse.
 
 ## Dashboard
 
-![Dashboard](./screenshots/Dashboard.png)
+![Dashboard](./screenshots/retail_performance_dashboard.png)
 
 ---
 
