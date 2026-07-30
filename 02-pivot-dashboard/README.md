@@ -40,7 +40,7 @@ an end-to-end workflow — clean first, then analyse.
 
 ## Dashboard
 
-![Dashboard](./screenshots/retail_performance_dashboard.png)
+![Dashboard](./screenshots/Dashboard.png)
 
 ---
 
@@ -160,6 +160,30 @@ Each chart is a **PivotChart** — built directly from a PivotTable. This means:
 
 ---
 
+## Slicers and Timeline
+
+Three slicers and one timeline are connected to all four PivotTables,
+making the dashboard fully interactive.
+
+| Filter | Type | Options |
+|--------|------|---------|
+| Category | Slicer | 8 categories — click any to filter all charts instantly |
+| Location | Slicer | In-store / Online |
+| Payment Method | Slicer | Cash / Credit Card / Digital Wallet |
+| Transaction Date | Timeline | Jan 2022 – Jan 2025, filterable by year or month |
+
+**How they work:**
+- Each slicer and timeline is connected to all 4 PivotTables via **Report Connections**
+- Selecting a value in any slicer instantly updates all 4 charts and all 3 KPI cards simultaneously
+- Multiple values can be selected at once using Ctrl + Click
+- Click the clear filter icon (top right of each slicer) to reset
+
+**Example:** Clicking *"Online"* in the Location slicer immediately shows
+revenue, transaction count, and trends for online transactions only —
+across every chart on the dashboard.
+
+---
+
 ## Design decisions
 
 | Decision | Reason |
@@ -167,6 +191,8 @@ Each chart is a **PivotChart** — built directly from a PivotTable. This means:
 | 4 separate sheets | Separates data, logic, charts, and presentation for easy navigation |
 | PivotTables over SUMIF | Auto-refresh on data change; native connection to PivotCharts |
 | PivotCharts | Stay in sync with PivotTables automatically — no manual updates |
+| Slicers connected to all PivotTables | One click filters every chart simultaneously |
+| Timeline at year level | Shows full 2022–2025 range at a glance; drillable to month |
 | Grid lines hidden on Dashboard | Gives a clean, presentation-ready appearance |
 | KPI cards at the top | Most important numbers visible first before charts |
 
